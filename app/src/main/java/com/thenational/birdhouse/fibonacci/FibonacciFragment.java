@@ -53,7 +53,7 @@ public class FibonacciFragment extends BaseFragment {
         public Loader<Result<CharSequence>> onCreateLoader(int id, final Bundle args) {
             switch (id) {
                 case FIBONACCI_LOADER_ID:
-                    return mCalculatorLoaders.fibonacciLoader(getActivity());
+                    return mCalculatorFacade.calculateFibonacci(getActivity());
             }
             return null;
         }

@@ -6,15 +6,18 @@ import android.support.v4.content.Loader;
 import com.thenational.birdhouse.loader.CustomLoader;
 import com.thenational.birdhouse.loader.Result;
 
-public class CalculatorLoaders {
+import rx.Observable;
+import rx.Subscriber;
+
+public class CalculatorFacade {
     
     private final Calculator mCalculator;
     
-    public CalculatorLoaders(Calculator calculator) {
+    public CalculatorFacade(Calculator calculator) {
         mCalculator = calculator;
     }
     
-    public Loader<Result<CharSequence>> linearLoader(Context context, final int base) {
+    public Loader<Result<CharSequence>> calculateLinear(Context context, final int base) {
         return new CustomLoader<CharSequence>(context) {
             @Override
             public Result<CharSequence> loadInBackground() {
@@ -28,7 +31,7 @@ public class CalculatorLoaders {
         };
     }
 
-    public Loader<Result<CharSequence>> fibonacciLoader(Context context) {
+    public Loader<Result<CharSequence>> calculateFibonacci(Context context) {
         return new CustomLoader<CharSequence>(context) {
             @Override
             public Result<CharSequence> loadInBackground() {
@@ -42,17 +45,18 @@ public class CalculatorLoaders {
         };
     }
 
-    public Loader<Result<CharSequence>> factorialLoader(Context context) {
-        return new CustomLoader<CharSequence>(context) {
+    public Observable<Result<CharSequence>> calculateFactorial() {
+        return Observable.create(new Observable.OnSubscribe<Result<CharSequence>>() {
             @Override
-            public Result<CharSequence> loadInBackground() {
+            public void call(Subscriber<? super Result<CharSequence>> subscriber) {
                 try {
                     CharSequence data = mCalculator.factorial();
-                    return new Result(data);
+                    subscriber.onNext(new Result<>(data));
+                    subscriber.onCompleted();
                 } catch (CalculationException e) {
-                    return new Result(e.getCode(), e.getMessage());
+                    subscriber.onError(e);
                 }
             }
-        };
+        });         
     }
 }

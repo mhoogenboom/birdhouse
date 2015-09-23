@@ -2,8 +2,6 @@ package com.thenational.birdhouse.factorial;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +12,11 @@ import com.thenational.birdhouse.BaseFragment;
 import com.thenational.birdhouse.R;
 import com.thenational.birdhouse.loader.Result;
 
-public class FactorialFragment extends BaseFragment {
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-    private static final int FACTORIAL_LOADER_ID = 1;
+public class FactorialFragment extends BaseFragment {
 
     public static Fragment newInstance() {
         Bundle args = new Bundle();
@@ -43,34 +43,29 @@ public class FactorialFragment extends BaseFragment {
 
         mSeriesView.setText(R.string.loading);
 
-        Bundle args = new Bundle();
+        mCalculatorFacade.calculateFactorial()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(this.<Result<CharSequence>>bindToLifecycle())
+                .subscribe(new Subscriber<Result<CharSequence>>() {
 
-        getLoaderManager().initLoader(FACTORIAL_LOADER_ID, args, loaderCb);
+                    @Override
+                    public void onNext(Result<CharSequence> result) {
+                        Log.d("---", "Data loaded for " + this);
+                        if (result.isSuccess()) {
+                            mSeriesView.setText(result.getData());
+                        } else {
+                            mSeriesView.setText(result.getErrorCode() + " " + result.getErrorMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mSeriesView.setText("");
+                    }
+                });
     }
-
-    private final LoaderManager.LoaderCallbacks<Result<CharSequence>> loaderCb = new LoaderManager.LoaderCallbacks<Result<CharSequence>>() {
-        @Override
-        public Loader<Result<CharSequence>> onCreateLoader(int id, final Bundle args) {
-            switch (id) {
-                case FACTORIAL_LOADER_ID:
-                    return mCalculatorLoaders.factorialLoader(getActivity());
-            }
-            return null;
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Result<CharSequence>> loader, Result<CharSequence> result) {
-            Log.d("---", "Data loaded for " + this);
-            if (result.isSuccess()) {
-                mSeriesView.setText(result.getData());
-            } else {
-                mSeriesView.setText(result.getErrorCode() + " " + result.getErrorMessage());
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Result<CharSequence>> loader) {
-            mSeriesView.setText("");
-        }
-    };
 }

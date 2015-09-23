@@ -57,7 +57,7 @@ public class LinearFragment extends BaseFragment {
             switch (id) {
                 case LINEAR_LOADER_ID: 
                     int base = args.getInt(ARG_BASE);
-                    return mCalculatorLoaders.linearLoader(getActivity(), base);
+                    return mCalculatorFacade.calculateLinear(getActivity(), base);
             }
             return null;
         }

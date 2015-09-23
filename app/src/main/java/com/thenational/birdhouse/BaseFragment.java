@@ -5,17 +5,18 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.thenational.birdhouse.calculator.Calculator;
-import com.thenational.birdhouse.calculator.CalculatorLoaders;
+import com.thenational.birdhouse.calculator.CalculatorFacade;
+import com.trello.rxlifecycle.components.support.RxFragment;
 
-public class BaseFragment extends Fragment {
+public class BaseFragment extends RxFragment {
     
-    protected CalculatorLoaders mCalculatorLoaders;
+    protected CalculatorFacade mCalculatorFacade;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("---", "Create " + this);
-        mCalculatorLoaders = new CalculatorLoaders(new Calculator());
+        mCalculatorFacade = new CalculatorFacade(new Calculator());
     }
 
     @Override
@@ -23,5 +24,11 @@ public class BaseFragment extends Fragment {
         super.onStart();
         Log.d("---", "Start " + this);
     }
-    
+
+    @Override
+    public void onPause() {
+        Log.d("---", "Pause " + this);
+        super.onPause();        
+    }
+
 }
