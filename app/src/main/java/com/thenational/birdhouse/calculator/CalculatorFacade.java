@@ -44,14 +44,29 @@ public class CalculatorFacade {
             }
         };
     }
-
-    public Observable<Result<CharSequence>> calculateFactorial() {
-        return Observable.create(new Observable.OnSubscribe<Result<CharSequence>>() {
+    
+    public Observable<CharSequence> calculateExponential(final int base) {
+        return Observable.create(new Observable.OnSubscribe<CharSequence>() {
             @Override
-            public void call(Subscriber<? super Result<CharSequence>> subscriber) {
+            public void call(Subscriber<? super CharSequence> subscriber) {
+                try {
+                    CharSequence data = mCalculator.exponential(base);
+                    subscriber.onNext(data);
+                    subscriber.onCompleted();
+                } catch (CalculationException e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+    
+    public Observable<CharSequence> calculateFactorial() {
+        return Observable.create(new Observable.OnSubscribe<CharSequence>() {
+            @Override
+            public void call(Subscriber<? super CharSequence> subscriber) {
                 try {
                     CharSequence data = mCalculator.factorial();
-                    subscriber.onNext(new Result<>(data));
+                    subscriber.onNext(data);
                     subscriber.onCompleted();
                 } catch (CalculationException e) {
                     subscriber.onError(e);

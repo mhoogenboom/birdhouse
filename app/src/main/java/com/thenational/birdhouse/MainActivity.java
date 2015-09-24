@@ -18,6 +18,7 @@ public class MainActivity extends FragmentActivity {
         PagerAdapter adapter = new MainAdapter(getSupportFragmentManager(), 
                 MainAdapter.Page.LINEAR,
                 MainAdapter.Page.FIBONACCI, 
+                MainAdapter.Page.EXPONENTIAL,
                 MainAdapter.Page.FACTORIAL);
         
         mViewPager = (ViewPager) findViewById(R.id.pager);

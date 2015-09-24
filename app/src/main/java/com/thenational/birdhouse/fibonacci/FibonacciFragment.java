@@ -60,8 +60,8 @@ public class FibonacciFragment extends BaseFragment {
 
         @Override
         public void onLoadFinished(Loader<Result<CharSequence>> loader, Result<CharSequence> result) {
-            Log.d("---", "Data loaded for " + this);
             if (result.isSuccess()) {
+                Log.d("---", "Calculated series for " + this);
                 mSeriesView.setText(result.getData());
             } else {
                 mSeriesView.setText(result.getErrorCode() + " " + result.getErrorMessage());

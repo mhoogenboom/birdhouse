@@ -1,4 +1,4 @@
-package com.thenational.birdhouse.factorial;
+package com.thenational.birdhouse.exponential;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,12 +17,12 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class FactorialFragment extends BaseFragment {
+public class ExponentialFragment extends BaseFragment {
 
     public static Fragment newInstance() {
         Bundle args = new Bundle();
 
-        Fragment fragment = new FactorialFragment();
+        Fragment fragment = new ExponentialFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -31,9 +31,9 @@ public class FactorialFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.factorial_fragment, container, false);
+        View view = inflater.inflate(R.layout.exponential_fragment, container, false);
 
-        mSeriesView = (TextView) view.findViewById(R.id.factorial_fragment_view);
+        mSeriesView = (TextView) view.findViewById(R.id.exponential_fragment_view);
 
         return view;
     }
@@ -44,7 +44,7 @@ public class FactorialFragment extends BaseFragment {
 
         mSeriesView.setText(R.string.loading);
 
-        mCalculatorFacade.calculateFactorial()
+        mCalculatorFacade.calculateExponential(2)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .compose(this.<CharSequence>bindToLifecycle())
